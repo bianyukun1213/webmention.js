@@ -110,7 +110,13 @@ A more detailed example:
   //   t: function t(/** @type {string} */key) { return key; }
   // }
   // const t = window.i18next.t.bind(window.i18next);
-  const t = tideInteractions.webmentionjs.i18n.bind(tideInteractions.webmentionjs); // 替换为我自己的简易 i18n 方案。
+	const t = (key) => {
+		const fnKey = `const_webmentionjs_${key.toLowerCase()}`
+		if (window.m && typeof window.m[fnKey] === 'function') {
+			return window.m[fnKey]()
+		}
+		return key
+	}
 
   /**
    * Read the configuration value.
@@ -383,16 +389,7 @@ A more detailed example:
     `;
   }
 
-  /**
-   * @typedef WebmentionResponse
-   * @type {Object}
-   * @property {Array<Reaction>} children
-   */
-
-  /**
-   * Register event listener.
-   */
-  window.addEventListener("load", async function () {
+  async function init() {
     const container = document.getElementById(containerID);
     if (!container) {
       // no container, so do nothing
@@ -468,7 +465,22 @@ A more detailed example:
     }
 
     container.innerHTML = `${formattedComments}${reactions}`;
-  });
+  }
+
+  /**
+   * @typedef WebmentionResponse
+   * @type {Object}
+   * @property {Array<Reaction>} children
+   */
+
+  /**
+   * Register event listener.
+   */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 }());
 
 // End-of-file marker for LibreJS
