@@ -105,18 +105,18 @@ A more detailed example:
 (function () {
     "use strict";
 
-  // Shim i18next
-  // window.i18next = window.i18next || {
-  //   t: function t(/** @type {string} */key) { return key; }
-  // }
-  // const t = window.i18next.t.bind(window.i18next);
-	const t = (key) => {
-		const fnKey = `const_webmentionjs_${key.toLowerCase()}`
-		if (window.m && typeof window.m[fnKey] === 'function') {
-			return window.m[fnKey]()
-		}
-		return key
-	}
+    // Shim i18next
+    // window.i18next = window.i18next || {
+    //   t: function t(/** @type {string} */key) { return key; }
+    // }
+    // const t = window.i18next.t.bind(window.i18next);
+    const t = (key) => {
+        const fnKey = `const_webmentionjs_${key.toLowerCase()}`
+        if (window.m && typeof window.m[fnKey] === 'function') {
+            return window.m[fnKey]()
+        }
+        return key
+    }
 
     /**
      * Read the configuration value.
@@ -403,7 +403,7 @@ A more detailed example:
     /**
      * Register event listener.
      */
-    window.addEventListener("load", async function () {
+    async function init() {
         const container = document.getElementById(containerID);
         if (!container) {
             // no container, so do nothing
@@ -479,7 +479,22 @@ A more detailed example:
         }
 
         container.innerHTML = `${formattedComments}${reactions}`;
-    });
+    }
+
+    /**
+     * @typedef WebmentionResponse
+     * @type {Object}
+     * @property {Array<Reaction>} children
+     */
+
+    /**
+     * Register event listener.
+     */
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
 })();
 
 // End-of-file marker for LibreJS
